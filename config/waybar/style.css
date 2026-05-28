@@ -33,8 +33,10 @@
 #cpu,
 #battery,
 #pulseaudio,
+#network,
+#bluetooth,
 #custom-omarchy,
-
+#custom-battery_threshold,
 #custom-update {
   min-width: 12px;
   margin: 0 7.5px;
@@ -42,14 +44,6 @@
 
 #tray {
   margin-right: 16px;
-}
-
-#bluetooth {
-  margin-right: 17px;
-}
-
-#network {
-  margin-right: 13px;
 }
 
 #custom-expand-icon {
@@ -110,4 +104,16 @@ tooltip {
   min-width: 0;
   margin: 0;
   padding: 0;
+}
+
+#custom-battery_threshold {
+  font-size: 14px;
+}
+
+#custom-battery_threshold.enabled {
+  color: #89b4fa;
+}
+
+#custom-battery_threshold.disabled {
+  color: #fab387;
 }

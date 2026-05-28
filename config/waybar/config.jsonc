@@ -7,13 +7,28 @@
   "modules-left": ["custom/omarchy", "hyprland/workspaces"],
   "modules-center": ["clock", "custom/weather", "custom/update", "custom/voxtype", "custom/screenrecording-indicator", "custom/idle-indicator", "custom/notification-silencing-indicator"],
   "modules-right": [
-    "group/tray-expander",
+    "tray",
     "bluetooth",
     "network",
     "pulseaudio",
     "cpu",
+    "custom/battery_threshold",
     "battery"
   ],
+  "custom/battery_threshold": {
+    "exec": "/home/vin3/.config/waybar/battery_threshold.sh",
+    "return-type": "json",
+    "interval": 30,
+    "on-click": "/home/vin3/.config/waybar/battery_threshold.sh toggle",
+    "on-click-right": "omarchy-restart waybar",
+    "tooltip": true
+  },
+  "custom/power": {
+    "exec": "/home/vin3/.config/waybar/power_usage.sh",
+    "return-type": "json",
+    "interval": 2,
+    "tooltip": true
+  },
   "hyprland/workspaces": {
     "on-click": "activate",
     "format": "{icon}",
@@ -61,17 +76,17 @@
     "on-click-right": "alacritty"
   },
   "clock": {
-    "format": "{:L%A %H:%M}",
+    "format": "{:L%A, %d %b %H:%M}",
     "format-alt": "{:L%d %B W%V %Y}",
     "tooltip": false,
     "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
   },
   "custom/weather": {
-    "exec": "$OMARCHY_PATH/default/waybar/weather.sh",
+    "exec": "$HOME/.config/waybar/custom_weather.sh",
     "return-type": "json",
     "interval": 60,
     "tooltip": false,
-    "on-click": "notify-send -u low \"$(omarchy-weather-status)\""
+    "on-click": "notify-send -u low \"São Luiz Gonzaga: $(curl -s 'https://wttr.in/Sao+Luiz+Gonzaga?format=%t')\nSanto Antônio das Missões: $(curl -s 'https://wttr.in/Santo+Antonio+das+Missoes?format=%t')\""
   },
   "network": {
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
@@ -87,10 +102,11 @@
     "on-click": "omarchy-launch-wifi"
   },
   "battery": {
-    "format": "{capacity}% {icon}",
-    "format-discharging": "{icon}",
-    "format-charging": "{icon}",
-    "format-plugged": "",
+    "interval": 2,
+    "format": "{power:0.1f}W  {capacity}% {icon}",
+    "format-discharging": "{power:0.1f}W  {capacity}% {icon}",
+    "format-charging": "{power:0.1f}W  {capacity}% {icon}",
+    "format-plugged": "{power:0.1f}W  {capacity}% {icon}",
     "format-icons": {
       "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
       "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]

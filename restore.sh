@@ -18,6 +18,9 @@ files=(
   hypr/workspaces.conf
   waybar/config.jsonc
   waybar/style.css
+  waybar/battery_threshold.sh
+  waybar/power_usage.sh
+  waybar/custom_weather.sh
   omarchy/extensions/menu.sh
 )
 
