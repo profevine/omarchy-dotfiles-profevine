@@ -1,5 +1,6 @@
 #!/bin/bash
-# Script para atualizar o Omarchy, sincronizar com o GitHub e atualizar configurações locais.
+# Script para atualizar o Omarchy e aplicar configurações do GitHub nesta máquina.
+# Este script é focado em DOWNLOAD: ele puxa do GitHub e aplica localmente.
 
 set -e
 
@@ -7,9 +8,9 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_SRC="$DOTFILES_DIR/config"
 CONFIG_DST="$HOME/.config"
 
-echo "--- Iniciando Atualização e Sincronização ---"
+echo "--- Iniciando Atualização (Modo Download) ---"
 
-# 1. Atualizar o sistema Omarchy (se o comando estiver disponível)
+# 1. Atualizar o sistema Omarchy
 if command -v omarchy-update &> /dev/null; then
     echo "Atualizando Omarchy..."
     omarchy-update
@@ -17,27 +18,17 @@ else
     echo "Comando omarchy-update não encontrado, pulando..."
 fi
 
-# 2. Sincronizar com o GitHub
+# 2. Puxar as configurações mais recentes do GitHub
 cd "$DOTFILES_DIR"
-
-# Puxar mudanças remotas primeiro
 echo "Buscando atualizações no GitHub..."
-git pull origin main
 
-# Verificar se há mudanças locais para enviar
-if [[ -n $(git status -s) ]]; then
-    echo "Detectadas mudanças locais. Enviando para o GitHub..."
-    git add .
-    git commit -m "sync: auto-update from $(hostname) em $(date +'%Y-%m-%d %H:%M:%S')"
-    git push origin main
-else
-    echo "Nenhuma mudança local para sincronizar."
-fi
+# Descarta mudanças locais que possam impedir o pull (segurança para máquinas novas)
+git fetch origin main
+git reset --hard origin/main
 
-# 3. Atualizar as configurações locais (~/.config) baseadas no repositório
-echo "Atualizando arquivos de configuração local (~/.config)..."
+# 3. Aplicar as configurações do repositório no sistema (~/.config)
+echo "Sincronizando arquivos de configuração com ~/.config..."
 
-# Lista de arquivos para sincronizar (baseada no restore.sh)
 files=(
   hypr/bindings.conf
   hypr/hyprland.conf
@@ -59,14 +50,14 @@ for f in "${files[@]}"; do
   if [ -f "$src" ]; then
     mkdir -p "$(dirname "$dst")"
     cp "$src" "$dst"
-    echo "Atualizado: ~/.config/$f"
+    echo "Aplicado: ~/.config/$f"
   fi
 done
 
-# 4. Recarregar Hyprland
+# 4. Recarregar Hyprland para aplicar as mudanças
 if command -v hyprctl &> /dev/null; then
     echo "Recarregando Hyprland..."
     hyprctl reload
 fi
 
-echo "--- Tudo pronto! Sistema e dotfiles atualizados. ---"
+echo "--- Concluído! Configurações do GitHub aplicadas com sucesso. ---"
