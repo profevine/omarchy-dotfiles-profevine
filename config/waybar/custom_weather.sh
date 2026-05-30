@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Locais solicitados
-LOCATIONS=("Sao+Luiz+Gonzaga" "Santo+Antonio+das+Missoes" "Roque+Gonzales")
-DISPLAY_NAMES=("São Luiz Gonzaga" "Santo Antônio das Missões" "Roque Gonzales")
+LOCATIONS=("Sao+Luiz+Gonzaga" "Santo+Antonio+das+Missoes" "Roque+Gonzales" "Porto+Alegre")
+DISPLAY_NAMES=("São Luiz Gonzaga" "Santo Antônio das Missões" "Roque Gonzales" "Porto Alegre")
 
 fetch_weather() {
     local loc=$1

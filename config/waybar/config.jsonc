@@ -86,7 +86,7 @@
     "return-type": "json",
     "interval": 60,
     "tooltip": false,
-    "on-click": "notify-send -u low \"São Luiz Gonzaga: $(curl -s 'https://wttr.in/Sao+Luiz+Gonzaga?format=%t')\nSanto Antônio das Missões: $(curl -s 'https://wttr.in/Santo+Antonio+das+Missoes?format=%t')\nRoque Gonzales: $(curl -s 'https://wttr.in/Roque+Gonzales?format=%t')\""
+    "on-click": "notify-send -u low \"São Luiz Gonzaga: $(curl -s 'https://wttr.in/Sao+Luiz+Gonzaga?format=%t')\nSanto Antônio das Missões: $(curl -s 'https://wttr.in/Santo+Antonio+das+Missoes?format=%t')\nRoque Gonzales: $(curl -s 'https://wttr.in/Roque+Gonzales?format=%t')\nPorto Alegre: $(curl -s 'https://wttr.in/Porto+Alegre?format=%t')\""
   },
   "network": {
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
