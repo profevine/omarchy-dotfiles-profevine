@@ -87,7 +87,7 @@
     "interval": 60,
     "tooltip": false,
     "on-click": "notify-send -u low \"São Luiz Gonzaga: $(curl -s 'https://wttr.in/Sao+Luiz+Gonzaga?format=%t')\nSanto Antônio das Missões: $(curl -s 'https://wttr.in/Santo+Antonio+das+Missoes?format=%t')\nRoque Gonzales: $(curl -s 'https://wttr.in/Roque+Gonzales?format=%t')\nPorto Alegre: $(curl -s 'https://wttr.in/Porto+Alegre?format=%t')\"",
-    "on-click-right": "alacritty -e sh -c \"for city in Sao+Luiz+Gonzaga Santo+Antonio+das+Missoes Roque+Gonzales Porto+Alegre; do curl -s https://wttr.in/\\$city?m; echo ''; echo '--------------------------------------------------'; echo ''; done; read -p 'Pressione Enter para sair...'\""
+    "on-click-right": "alacritty -e sh -c \"for city in Porto+Alegre Roque+Gonzales Santo+Antonio+das+Missoes Sao+Luiz+Gonzaga; do curl -s https://wttr.in/\\$city?m; echo ''; echo '--------------------------------------------------'; echo ''; done; read -p 'Pressione Enter para sair...'\""
   },
   "network": {
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
