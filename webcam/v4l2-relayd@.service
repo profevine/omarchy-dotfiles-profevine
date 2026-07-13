@@ -1,0 +1,14 @@
+[Unit]
+Description=v4l2-relay daemon service for %i
+PartOf=v4l2-relayd.service
+After=modprobe@v4l2loopback.service systemd-logind.service
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/v4l2-relayd
+EnvironmentFile=-/etc/v4l2-relayd.d/%i.conf
+ExecStart=/usr/bin/v4l2-relayd -i ${VIDEOSRC} -o "appsrc name=appsrc ! video/x-raw,format=${FORMAT},width=${WIDTH},height=${HEIGHT},framerate=${FRAMERATE} ! videoconvert ! v4l2sink name=v4l2sink device=/dev/video0"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
