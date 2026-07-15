@@ -13,13 +13,11 @@ echo "--- Iniciando Upload de Configurações para o GitHub ---"
 # 1. Copiar as configurações ativas do sistema (~/.config) para o repositório
 echo "Copiando configurações ativas de ~/.config para o repositório..."
 
-# Lista de arquivos para sincronizar
+# Lista de arquivos gerais para sincronizar
 files=(
   hypr/bindings.conf
   hypr/hyprland.conf
-  hypr/input.conf
   hypr/looknfeel.conf
-  hypr/monitors.conf
   hypr/workspaces.conf
   waybar/config.jsonc
   waybar/style.css
@@ -38,6 +36,25 @@ for f in "${files[@]}"; do
     echo "Copiado: $f"
   else
     echo "Aviso: Arquivo ativo não encontrado ($src), ignorando..."
+  fi
+done
+
+# Copiar arquivos específicos de máquina com sufixo do hostname
+hostname_suffix=$(hostname)
+machine_files=(
+  hypr/monitors.conf
+  hypr/input.conf
+)
+
+for mf in "${machine_files[@]}"; do
+  src="$CONFIG_DST/$mf"
+  dir_name=$(dirname "$mf")
+  base_name=$(basename "$mf" .conf)
+  dst="$CONFIG_SRC/$dir_name/${base_name}.${hostname_suffix}.conf"
+  if [ -f "$src" ]; then
+    mkdir -p "$(dirname "$dst")"
+    cp "$src" "$dst"
+    echo "Copiado com sufixo da máquina: $mf -> ${dir_name}/${base_name}.${hostname_suffix}.conf"
   fi
 done
 
