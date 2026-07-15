@@ -34,7 +34,6 @@ files=(
   hypr/hyprland.conf
   hypr/looknfeel.conf
   hypr/workspaces.conf
-  waybar/config.jsonc
   waybar/style.css
   waybar/battery_threshold.sh
   waybar/power_usage.sh
@@ -57,12 +56,15 @@ hostname_suffix=$(hostname)
 machine_files=(
   hypr/monitors.conf
   hypr/input.conf
+  waybar/config.jsonc
 )
 
 for mf in "${machine_files[@]}"; do
   dir_name=$(dirname "$mf")
-  base_name=$(basename "$mf" .conf)
-  src_machine="$CONFIG_SRC/$dir_name/${base_name}.${hostname_suffix}.conf"
+  base_name=$(basename "$mf")
+  extension="${base_name##*.}"
+  name_without_ext="${base_name%.*}"
+  src_machine="$CONFIG_SRC/$dir_name/${name_without_ext}.${hostname_suffix}.${extension}"
   src_fallback="$CONFIG_SRC/$mf"
   dst="$CONFIG_DST/$mf"
   
