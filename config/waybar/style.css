@@ -37,9 +37,18 @@
 #bluetooth,
 #custom-omarchy,
 #custom-battery_threshold,
+#custom-mouse_battery,
 #custom-update {
   min-width: 12px;
   margin: 0 7.5px;
+}
+
+#custom-mouse_battery.warning {
+  color: #fab387;
+}
+
+#custom-mouse_battery.critical {
+  color: #f38ba8;
 }
 
 #tray {
