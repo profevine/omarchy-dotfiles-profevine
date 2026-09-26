@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Script do Nautilus para liberar permissões de escrita em arquivos/pastas selecionados
+
+count=0
+while IFS= read -r path; do
+    if [ -n "$path" ] && [ -e "$path" ]; then
+        chmod -R u+rwX "$path"
+        count=$((count + 1))
+    fi
+done <<< "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+
+if command -v notify-send >/dev/null 2>&1; then
+    if [ "$count" -gt 0 ]; then
+        notify-send "Permissões Corrigidas" "Permissão de escrita liberada para $count item(ns)." -i dialog-information
+    fi
+fi

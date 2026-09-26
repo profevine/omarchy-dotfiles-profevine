@@ -23,6 +23,7 @@ general_files=(
   waybar/battery_threshold.sh
   waybar/power_usage.sh
   waybar/custom_weather.sh
+  systemd/user/fix-downloads-perms.service
   omarchy/extensions/menu.sh
 )
 
@@ -65,6 +66,32 @@ for mf in "${machine_files[@]}"; do
     echo "Aviso: Arquivo de configuração $mf não encontrado no repositório."
   fi
 done
+
+# 3. Restaurar scripts e atalhos em ~/.local
+echo ""
+echo "Restaurando scripts e atalhos em ~/.local..."
+local_files=(
+  "bin/fix-downloads-perms.sh"
+  "share/nautilus/scripts/Destravar Permissões"
+)
+
+for lf in "${local_files[@]}"; do
+  src="$DOTFILES_DIR/local/$lf"
+  dst="$HOME/.local/$lf"
+  if [ -f "$src" ]; then
+    mkdir -p "$(dirname "$dst")"
+    cp "$src" "$dst"
+    chmod +x "$dst"
+    echo "Restaurado: ~/.local/$lf"
+  fi
+done
+
+# 4. Ativar serviço de permissões do usuário
+if command -v systemctl &> /dev/null; then
+    echo "Ativando serviço fix-downloads-perms..."
+    systemctl --user daemon-reload 2>/dev/null || true
+    systemctl --user enable --now fix-downloads-perms.service 2>/dev/null || true
+fi
 
 echo ""
 echo "Restauração concluída! Reinicie o Hyprland (Super+Shift+Q -> logout) para aplicar."

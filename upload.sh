@@ -23,6 +23,7 @@ files=(
   waybar/battery_threshold.sh
   waybar/power_usage.sh
   waybar/custom_weather.sh
+  systemd/user/fix-downloads-perms.service
   omarchy/extensions/menu.sh
 )
 
@@ -35,6 +36,23 @@ for f in "${files[@]}"; do
     echo "Copiado: $f"
   else
     echo "Aviso: Arquivo ativo não encontrado ($src), ignorando..."
+  fi
+done
+
+# Copiar scripts e atalhos em ~/.local
+local_files=(
+  "bin/fix-downloads-perms.sh"
+  "share/nautilus/scripts/Destravar Permissões"
+)
+
+for lf in "${local_files[@]}"; do
+  src="$HOME/.local/$lf"
+  dst="$DOTFILES_DIR/local/$lf"
+  if [ -f "$src" ]; then
+    mkdir -p "$(dirname "$dst")"
+    cp "$src" "$dst"
+    chmod +x "$dst"
+    echo "Copiado (.local): $lf"
   fi
 done
 
