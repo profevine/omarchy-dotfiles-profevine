@@ -59,3 +59,6 @@ for workspace = 1, 10 do
     o.bind("SUPER + CTRL + " .. key, nil, "omarchy-shell -q shell togglePanelAt right " .. workspace)
   end
 end
+
+-- Webcam flutuando sobre as janelas, para tutoriais e lives (SUPER+ALT+[ / ] mudam o tamanho)
+o.bind("SUPER + ALT + W", "Webcam overlay", "webcam-overlay")

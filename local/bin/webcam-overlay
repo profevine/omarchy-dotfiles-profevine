@@ -1,0 +1,44 @@
+#!/bin/bash
+# Abre ou fecha a janelinha da webcam, flutuando sobre as outras janelas,
+# para gravar tutoriais ou fazer lives.
+#
+# Usa o mesmo app id da sobreposição da gravação de tela do Omarchy, então
+# herda as regras dela: flutua, fica fixa em todos os workspaces, abre no canto
+# inferior direito sem roubar o foco, e SUPER+ALT+[ / ] mudam o tamanho.
+#
+# Uso: webcam-overlay [small|medium|large] [dispositivo]
+#      WEBCAM_DEVICE=/dev/video2 webcam-overlay
+
+set -euo pipefail
+
+if pgrep -f -- "--wayland-app-id=WebcamOverlay-" > /dev/null; then
+  pkill -f -- "--wayland-app-id=WebcamOverlay-"
+  exit 0
+fi
+
+size=${1:-medium}
+device=${2:-${WEBCAM_DEVICE:-$(omarchy-capture-webcam-list | sed -n '1s/[[:space:]].*//p')}}
+
+if [[ -z $device ]]; then
+  omarchy-notification-send -u critical -t 3000 "Nenhuma webcam encontrada"
+  exit 1
+fi
+
+# Mesma preferência do Omarchy: a menor resolução 16:9 disponível, que basta
+# para uma janela pequena e mantém a latência baixa.
+capture_options="framerate=30"
+formats=$(v4l2-ctl --list-formats-ext -d "$device" 2>/dev/null || true)
+for resolution in 640x360 1280x720 1920x1080; do
+  if grep -q "$resolution" <<< "$formats"; then
+    capture_options="video_size=$resolution,$capture_options"
+    break
+  fi
+done
+
+setsid mpv "av://v4l2:$device" \
+  --profile=low-latency --untimed --no-cache \
+  --demuxer-lavf-o="$capture_options" \
+  '--vf=lavfi=[crop=ih*8/9:ih]' \
+  --title="WebcamOverlay" --wayland-app-id="WebcamOverlay-$size" \
+  --no-border --no-audio --no-osc --osd-level=0 \
+  --really-quiet &> /dev/null &
