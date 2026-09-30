@@ -68,6 +68,10 @@ Uma máquina sem versão própria de um arquivo de máquina **mantém o arquivo 
 
 **Exceção para um arquivo geral:** se uma das máquinas precisar de uma versão própria de um arquivo geral, crie a cópia `<nome>.<hostname>.<ext>` no repositório. A partir daí ela é usada e atualizada só naquela máquina. Para um atalho ou ajuste isolado, prefira o `host.lua`.
 
+**Temas** (`config/omarchy/themes/`):
+- `horde-forever`: tema da Horda inspirado em World of Warcraft: Forever (vermelho-sangue, ouro e carvão). Aplique com `omarchy theme set horde-forever`.
+- Os papéis de parede não ficam no repositório: são imagens da Blizzard e pesam ~90 MB. O tema guarda a lista em `backgrounds.txt`, e o `sync.sh`/`restore.sh` rodam o `fetch-backgrounds.sh`, que baixa da Warcraft Wiki só o que falta. Para acrescentar uma imagem, adicione uma linha na lista.
+
 **Plugins do Omarchy shell** (`config/omarchy/plugins/`):
 - Plugins próprios, copiados inteiros:
   - `vin3.tether-usage`: mostra na barra quantos GB foram gastos na sessão atual de tethering USB. Some quando o celular não está conectado.

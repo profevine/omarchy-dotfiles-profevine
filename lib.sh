@@ -99,6 +99,7 @@ save_configs() {
 
   save_faugus
   save_plugins
+  save_themes
 }
 
 # repositório -> ~/.config
@@ -136,6 +137,7 @@ apply_configs() {
 
   apply_faugus
   apply_plugins
+  apply_themes
 
   if command -v systemctl &> /dev/null; then
     systemctl --user daemon-reload 2>/dev/null || true
@@ -217,6 +219,41 @@ apply_plugins() {
     grep -qxF "$url" <<< "$installed" && continue
     omarchy plugin add "$url" --yes || echo "Aviso: falha ao instalar plugin $url"
   done < "$PLUGINS_LIST"
+}
+
+# Temas próprios (sem .git). Um tema com fetch-backgrounds.sh baixa os papéis
+# de parede sozinho, então vai sem a pasta backgrounds/: as imagens são de
+# terceiros e pesadas demais para o repositório.
+save_themes() {
+  local src="$CONFIG_DST/omarchy/themes" t name
+  [ -d "$src" ] || return 0
+  for t in "$src"/*/; do
+    [ -e "$t/.git" ] && continue
+    name=$(basename "$t")
+    rm -rf "$CONFIG_SRC/omarchy/themes/$name"
+    mkdir -p "$CONFIG_SRC/omarchy/themes"
+    cp -r "$t" "$CONFIG_SRC/omarchy/themes/$name"
+    if [ -x "$t/fetch-backgrounds.sh" ]; then
+      rm -rf "$CONFIG_SRC/omarchy/themes/$name/backgrounds"
+    fi
+    echo "Salvo (tema): omarchy/themes/$name"
+  done
+}
+
+apply_themes() {
+  local src="$CONFIG_SRC/omarchy/themes" t name dst
+  [ -d "$src" ] || return 0
+  for t in "$src"/*/; do
+    name=$(basename "$t")
+    dst="$CONFIG_DST/omarchy/themes/$name"
+    mkdir -p "$dst"
+    # Copia por cima sem apagar a pasta, para manter os papéis de parede já baixados
+    cp -r "$t". "$dst/"
+    echo "Aplicado (tema): ~/.config/omarchy/themes/$name"
+    if [ -x "$dst/fetch-backgrounds.sh" ]; then
+      "$dst/fetch-backgrounds.sh" || echo "Aviso: falha ao baixar papéis de parede de $name"
+    fi
+  done
 }
 
 reload_desktop() {

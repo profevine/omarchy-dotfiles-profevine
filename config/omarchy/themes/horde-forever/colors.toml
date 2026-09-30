@@ -1,0 +1,36 @@
+# Horde Forever: tema da Horda inspirado em World of Warcraft: Forever.
+# Carvão de Orgrimmar ao fundo, vermelho-sangue da bandeira, ouro e brasa.
+mode = "dark"
+
+accent = "#d13b23"
+selection = "#4a2419"
+muted = "#6b5444"
+
+background = "#1a1210"
+dark_background = "#140d0b"
+darker_background = "#0e0907"
+lighter_background = "#2b1d18"
+
+foreground = "#e8d5b5"
+dark_foreground = "#8a7560"
+light_foreground = "#d4bf9c"
+bright_foreground = "#f5e6c8"
+
+red = "#d13b23"
+yellow = "#e0a526"
+orange = "#e06a1f"
+green = "#7fa04a"
+cyan = "#5fa89a"
+blue = "#6b8cb3"
+magenta = "#b85a80"
+brown = "#8b5a2b"
+
+bright_red = "#ff5a3c"
+bright_yellow = "#f5c451"
+bright_green = "#a3c65c"
+bright_cyan = "#7cc7b8"
+bright_blue = "#8fb0d6"
+bright_magenta = "#d67fa1"
+
+hyprland_active_border = "rgba(d13b23ee) rgba(e0a526ee) 45deg"
+hyprland_inactive_border = "rgba(3a2820aa)"
