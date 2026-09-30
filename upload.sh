@@ -19,12 +19,18 @@ files=(
   hypr/hyprland.conf
   hypr/looknfeel.conf
   hypr/workspaces.conf
+  hypr/appearance.lua
+  hypr/autostart.lua
+  hypr/bindings.lua
+  hypr/hyprland.lua
+  hypr/looknfeel.lua
   waybar/style.css
   waybar/battery_threshold.sh
   waybar/power_usage.sh
   waybar/custom_weather.sh
   systemd/user/fix-downloads-perms.service
   omarchy/extensions/menu.sh
+  omarchy/extensions/omarchy-menu.jsonc
 )
 
 for f in "${files[@]}"; do
@@ -61,7 +67,11 @@ hostname_suffix=$(hostname)
 machine_files=(
   hypr/monitors.conf
   hypr/input.conf
+  hypr/monitors.lua
+  hypr/input.lua
+  hypr/hyprmoncfg-monitors.lua
   waybar/config.jsonc
+  omarchy/shell.json
 )
 
 for mf in "${machine_files[@]}"; do
@@ -77,6 +87,28 @@ for mf in "${machine_files[@]}"; do
     echo "Copiado com sufixo da máquina: $mf -> ${dir_name}/${name_without_ext}.${hostname_suffix}.${extension}"
   fi
 done
+
+# Plugins do Omarchy shell: os próprios (sem .git) são copiados inteiros;
+# os de terceiros são clones git e só têm a URL registrada para reinstalar.
+PLUGINS_SRC="$CONFIG_DST/omarchy/plugins"
+PLUGINS_DST="$CONFIG_SRC/omarchy/plugins"
+THIRD_PARTY_LIST="$CONFIG_SRC/omarchy/plugins-third-party.txt"
+
+if [ -d "$PLUGINS_SRC" ]; then
+  mkdir -p "$PLUGINS_DST"
+  : > "$THIRD_PARTY_LIST"
+  for p in "$PLUGINS_SRC"/*/; do
+    name=$(basename "$p")
+    if [ -e "$p/.git" ]; then
+      url=$(git -C "$p" remote get-url origin 2>/dev/null || true)
+      [ -n "$url" ] && echo "$url" >> "$THIRD_PARTY_LIST"
+    else
+      rm -rf "$PLUGINS_DST/$name"
+      cp -r "$p" "$PLUGINS_DST/$name"
+      echo "Copiado (plugin): omarchy/plugins/$name"
+    fi
+  done
+fi
 
 # 2. Sincronizar com o GitHub
 cd "$DOTFILES_DIR"

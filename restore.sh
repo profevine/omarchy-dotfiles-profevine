@@ -19,12 +19,18 @@ general_files=(
   hypr/hyprland.conf
   hypr/looknfeel.conf
   hypr/workspaces.conf
+  hypr/appearance.lua
+  hypr/autostart.lua
+  hypr/bindings.lua
+  hypr/hyprland.lua
+  hypr/looknfeel.lua
   waybar/style.css
   waybar/battery_threshold.sh
   waybar/power_usage.sh
   waybar/custom_weather.sh
   systemd/user/fix-downloads-perms.service
   omarchy/extensions/menu.sh
+  omarchy/extensions/omarchy-menu.jsonc
 )
 
 for f in "${general_files[@]}"; do
@@ -41,7 +47,11 @@ done
 machine_files=(
   hypr/monitors.conf
   hypr/input.conf
+  hypr/monitors.lua
+  hypr/input.lua
+  hypr/hyprmoncfg-monitors.lua
   waybar/config.jsonc
+  omarchy/shell.json
 )
 
 for mf in "${machine_files[@]}"; do
@@ -66,6 +76,24 @@ for mf in "${machine_files[@]}"; do
     echo "Aviso: Arquivo de configuração $mf não encontrado no repositório."
   fi
 done
+
+# Plugins do Omarchy shell: copia os próprios e reinstala os de terceiros pelo git
+if [ -d "$CONFIG_SRC/omarchy/plugins" ]; then
+  mkdir -p "$CONFIG_DST/omarchy/plugins"
+  for p in "$CONFIG_SRC/omarchy/plugins"/*/; do
+    name=$(basename "$p")
+    rm -rf "$CONFIG_DST/omarchy/plugins/$name"
+    cp -r "$p" "$CONFIG_DST/omarchy/plugins/$name"
+    echo "Restaurado (plugin): ~/.config/omarchy/plugins/$name"
+  done
+fi
+
+if [ -f "$CONFIG_SRC/omarchy/plugins-third-party.txt" ] && command -v omarchy &> /dev/null; then
+  while read -r url; do
+    [ -z "$url" ] && continue
+    omarchy plugin add "$url" --yes || echo "Aviso: falha ao instalar plugin $url"
+  done < "$CONFIG_SRC/omarchy/plugins-third-party.txt"
+fi
 
 # 3. Restaurar scripts e atalhos em ~/.local
 echo ""

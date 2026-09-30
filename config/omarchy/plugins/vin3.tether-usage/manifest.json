@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "vin3.tether-usage",
+  "name": "Tether usage",
+  "version": "1.0.0",
+  "author": "vin3",
+  "description": "Data used on the current USB tethering session",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "TetherUsage.qml"
+  },
+  "barWidget": {
+    "displayName": "Tether usage",
+    "description": "Data used on the current USB tethering session",
+    "category": "System",
+    "allowMultiple": false
+  }
+}
