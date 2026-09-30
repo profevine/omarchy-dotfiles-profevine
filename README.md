@@ -4,83 +4,80 @@ Este repositório contém as minhas configurações personalizadas para o Omarch
 
 ## 🚀 Fluxos de Trabalho
 
-### 1. Instalação Limpa (`restore.sh`)
-Use numa máquina recém-formatada, depois de instalar o Omarchy.
+Os três scripts usam a mesma lista de arquivos, definida em `lib.sh`. Para passar a versionar um arquivo novo, adicione-o lá.
+
+### 1. Salvar Modificações (`upload.sh`)
+Use na máquina onde você mexeu nas configurações.
 
 **O que ele faz:**
-- Aplica as configurações gerais em `~/.config/`.
-- Aplica os arquivos específicos da máquina, escolhidos pelo hostname (veja abaixo).
-- Copia os meus plugins do Omarchy shell e reinstala os plugins de terceiros via `omarchy plugin add`.
-- Restaura as preferências do Faugus Launcher.
-- Restaura os scripts em `~/.local` e ativa o serviço `fix-downloads-perms`.
+- Para se o repositório tiver mudanças soltas, por exemplo arquivos trazidos pelo Nextcloud de outra máquina.
+- Faz `git pull` antes, para não desfazer o que a outra máquina enviou.
+- Copia as configurações de `~/.config/` para o repositório, separando o que é geral do que é desta máquina.
+- Faz `commit` e `push`.
 
-**Como usar:**
+```bash
+./upload.sh
+./upload.sh "ajustei o layout da barra"   # mensagem de commit opcional
+```
+
+---
+
+### 2. Atualizar uma Máquina (`sync.sh`)
+Use para trazer para esta máquina o que foi salvo na outra.
+
+**O que ele faz:**
+- Para se o repositório tiver mudanças ou commits que ainda não foram para o GitHub, em vez de apagá-los.
+- Atualiza o Omarchy (`omarchy-update`).
+- Puxa o GitHub e aplica as configurações seguindo as regras de máquina abaixo.
+- Recarrega o Hyprland (e avisa se a config tiver erros) e reinicia o Omarchy shell.
+
+```bash
+./sync.sh
+./sync.sh --no-update   # pula o omarchy-update
+```
+
+---
+
+### 3. Instalação Limpa (`restore.sh`)
+Use numa máquina recém-formatada, depois de instalar o Omarchy. Aplica tudo, como o `sync.sh`, mas sem atualizar o sistema nem mexer no git.
+
 ```bash
 bash restore.sh
 ```
 
 ---
 
-### 2. Atualizar uma Máquina (`sync.sh`)
-Use quando quiser baixar as configurações mais recentes que você salvou no GitHub.
+## 💻 Desktop e Notebook
 
-**O que ele faz:**
-- Atualiza o sistema Omarchy (`omarchy-update`).
-- Puxa as configurações do GitHub com `git reset --hard` (sobrescrevendo mudanças locais no repositório).
-- Aplica os arquivos em `~/.config/` e recarrega o Hyprland.
+Cada máquina é identificada pelo hostname: `ch3n` é o desktop, `m33po` é o notebook. No repositório, a versão de uma máquina é salva como `<nome>.<hostname>.<ext>`, por exemplo `config/hypr/monitors.ch3n.lua`.
 
-**Como usar:**
-```bash
-./sync.sh
-```
-
-> **Atenção:** o `sync.sh` ainda aplica só a configuração antiga (arquivos `.conf` do Hyprland e Waybar). A config Lua, o `shell.json`, os plugins e o Faugus só são aplicados pelo `restore.sh`.
-
----
-
-### 3. Salvar Modificações (`upload.sh`)
-Use na máquina onde você mexeu nas configurações e quer salvá-las no GitHub.
-
-**O que ele faz:**
-- Copia as configurações ativas do sistema (`~/.config/`) para o repositório.
-- Verifica se há mudanças.
-- Faz o `commit` e o `push` automáticos para o GitHub.
-
-**Como usar:**
-```bash
-./upload.sh
-```
-
-*Opcional: você pode passar uma mensagem de commit personalizada:*
-```bash
-./upload.sh "ajustei o layout da barra"
-```
-
----
-
-## 📂 Arquivos Sincronizados
-
-**Gerais (iguais em todas as máquinas):**
-- **Hyprland:** `hyprland.lua`, `bindings.lua`, `looknfeel.lua`, `appearance.lua`, `autostart.lua` (e os `.conf` antigos).
+**Arquivos gerais**, iguais nas duas máquinas:
+- **Hyprland:** `hyprland.lua`, `bindings.lua`, `looknfeel.lua`, `appearance.lua`, `autostart.lua`.
 - **Omarchy:** menu (`omarchy-menu.jsonc` e `menu.sh`).
-- **Faugus Launcher:** `config.json`, sem a chave da SteamGridDB e sem tempo de jogo e datas.
+- **Faugus Launcher:** `config.json`, sem a chave da SteamGridDB, sem tempo de jogo e datas e sem o tamanho da janela. Ao aplicar, as preferências são mescladas no arquivo local, então esses campos continuam os de cada máquina.
 - **Scripts extras:** serviço e atalho do Nautilus para destravar permissões em Downloads.
-- **Waybar (legado):** config, estilos e scripts de clima e bateria, de antes do Omarchy shell.
+- **Legado:** os `.conf` antigos do Hyprland e a Waybar, de antes do Omarchy Quattro.
 
-**Específicos de máquina** (salvos como `<nome>.<hostname>.<ext>`, por exemplo `monitors.ch3n.lua`):
-- **Hyprland:** `monitors.lua`, `input.lua`, `hyprmoncfg-monitors.lua` (e os `.conf` antigos).
-- **Barra:** `omarchy/shell.json` (layout e widgets da barra).
-- **Waybar (legado):** `config.jsonc`.
+**Arquivos de máquina**, sempre separados por hostname:
+- **`hypr/host.lua`:** atalhos, apps e ajustes que só servem para uma das máquinas. O `hyprland.lua` carrega esse arquivo depois de todos os outros. Exemplo: o atalho da webcam do notebook fica em `host.m33po.lua`.
+- **Hyprland:** `monitors.lua`, `input.lua`, `hyprmoncfg-monitors.lua`.
+- **Barra:** `omarchy/shell.json`, com o layout e os widgets de cada máquina.
+- **Legado:** `monitors.conf`, `input.conf`, `waybar/config.jsonc`.
+
+Uma máquina sem versão própria de um arquivo de máquina **mantém o arquivo local**; ela nunca recebe o da outra máquina. Depois do primeiro `upload.sh` nela, a versão passa a existir.
+
+**Exceção para um arquivo geral:** se uma das máquinas precisar de uma versão própria de um arquivo geral, crie a cópia `<nome>.<hostname>.<ext>` no repositório. A partir daí ela é usada e atualizada só naquela máquina. Para um atalho ou ajuste isolado, prefira o `host.lua`.
 
 **Plugins do Omarchy shell** (`config/omarchy/plugins/`):
 - Plugins próprios, copiados inteiros:
   - `vin3.tether-usage`: mostra na barra quantos GB foram gastos na sessão atual de tethering USB. Some quando o celular não está conectado.
   - `vin3.keyboard-layout`: mostra o layout do teclado (🇧🇷 / 💀) e troca com um clique.
-- Plugins de terceiros: só a URL do git fica salva, em `config/omarchy/plugins-third-party.txt`, e o `restore.sh` reinstala cada um.
+- Plugins de terceiros: só a URL do git fica salva, em `config/omarchy/plugins-third-party.txt`. O `sync.sh` e o `restore.sh` instalam os que faltarem.
+- Um plugin instalado só aparece na barra se estiver no `shell.json` daquela máquina: `omarchy plugin enable <id>`.
 
 ## ⚠️ Avisos
-- O `sync.sh` faz um `git reset --hard`. Qualquer alteração no repositório local que não tenha ido para o GitHub será **perdida**. Rode o `upload.sh` antes de rodar o `sync.sh` em outra máquina se quiser preservar mudanças.
-- Este repositório fica numa pasta do Nextcloud. Se duas máquinas mexerem nele ao mesmo tempo, o Nextcloud pode trazer arquivos antigos de volta e criar cópias `(conflicted copy ...)`. Rode `git status` antes de trabalhar, e `git pull` numa máquina antes de mexer nela.
+- **Rode o `sync.sh` antes de mexer numa máquina.** Se as duas máquinas alterarem o mesmo arquivo geral sem sincronizar, o último `upload.sh` vence. Foi assim que o atalho da webcam do notebook se perdeu uma vez.
+- Este repositório fica numa pasta do Nextcloud. Se duas máquinas mexerem nele ao mesmo tempo, o Nextcloud pode trazer arquivos antigos de volta e criar cópias `(conflicted copy ...)`. Os scripts param quando isso acontece; confira com `git status` e `git diff`.
 
 ---
 

@@ -23,6 +23,10 @@ require("hypr.looknfeel")
 require("hypr.appearance")
 require("hypr.autostart")
 
+-- Settings for this machine only (bindings, apps, tweaks). Versioned in the
+-- dotfiles as host.<hostname>.lua, so the shared files stay the same everywhere.
+do local path = os.getenv("HOME") .. "/.config/hypr/host.lua"; local file = io.open(path, "r"); if file then file:close(); dofile(path) end end
+
 -- Toggle config flags dynamically.
 require("default.hypr.toggles")
 
