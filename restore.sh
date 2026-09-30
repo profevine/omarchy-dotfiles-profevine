@@ -77,6 +77,13 @@ for mf in "${machine_files[@]}"; do
   fi
 done
 
+# Faugus Launcher: o app completa sozinho as chaves que faltarem no config.json
+if [ -f "$CONFIG_SRC/faugus-launcher/config.json" ]; then
+  mkdir -p "$CONFIG_DST/faugus-launcher"
+  cp "$CONFIG_SRC/faugus-launcher/config.json" "$CONFIG_DST/faugus-launcher/config.json"
+  echo "Restaurado: ~/.config/faugus-launcher/config.json"
+fi
+
 # Plugins do Omarchy shell: copia os próprios e reinstala os de terceiros pelo git
 if [ -d "$CONFIG_SRC/omarchy/plugins" ]; then
   mkdir -p "$CONFIG_DST/omarchy/plugins"

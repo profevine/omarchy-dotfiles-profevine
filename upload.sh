@@ -88,6 +88,16 @@ for mf in "${machine_files[@]}"; do
   fi
 done
 
+# Faugus Launcher: só as preferências. A chave da SteamGridDB fica de fora por
+# ser segredo, e tempo de jogo e datas porque mudam sozinhos a cada uso.
+FAUGUS_SRC="$CONFIG_DST/faugus-launcher/config.json"
+if [ -f "$FAUGUS_SRC" ] && command -v jq &> /dev/null; then
+  mkdir -p "$CONFIG_SRC/faugus-launcher"
+  jq 'del(."steamgriddb-api-key", .playtime, ."donate-last", ."backup-last-date")' \
+    "$FAUGUS_SRC" > "$CONFIG_SRC/faugus-launcher/config.json"
+  echo "Copiado (sem segredos): faugus-launcher/config.json"
+fi
+
 # Plugins do Omarchy shell: os próprios (sem .git) são copiados inteiros;
 # os de terceiros são clones git e só têm a URL registrada para reinstalar.
 PLUGINS_SRC="$CONFIG_DST/omarchy/plugins"
