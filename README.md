@@ -55,7 +55,7 @@ Cada máquina é identificada pelo hostname: `ch3n` é o desktop, `m33po` é o n
 - **Hyprland:** `hyprland.lua`, `bindings.lua`, `looknfeel.lua`, `appearance.lua`, `autostart.lua`.
 - **Omarchy:** menu (`omarchy-menu.jsonc` e `menu.sh`).
 - **Faugus Launcher:** `config.json`, sem a chave da SteamGridDB, sem tempo de jogo e datas e sem o tamanho da janela. Ao aplicar, as preferências são mescladas no arquivo local, então esses campos continuam os de cada máquina.
-- **Scripts extras:** serviço e atalho do Nautilus para destravar permissões em Downloads.
+- **Scripts extras:** serviço e atalho do Nautilus para destravar permissões em Downloads; `webcam-overlay`, que abre a webcam numa janelinha flutuante para tutoriais e lives (`SUPER ALT W`; `SUPER ALT [` e `]` mudam o tamanho).
 - **Legado:** os `.conf` antigos do Hyprland e a Waybar, de antes do Omarchy Quattro.
 
 **Arquivos de máquina**, sempre separados por hostname:

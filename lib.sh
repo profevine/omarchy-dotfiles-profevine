@@ -52,6 +52,7 @@ MACHINE_FILES=(
 
 LOCAL_FILES=(
   "bin/fix-downloads-perms.sh"
+  "bin/webcam-overlay"
   "share/nautilus/scripts/Destravar Permissões"
 )
 
