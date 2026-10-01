@@ -1,0 +1,110 @@
+{
+  "bar": {
+    "centerAnchor": "omarchy.clock",
+    "layout": {
+      "center": [
+        {
+          "id": "omarchy.indicators"
+        },
+        {
+          "id": "omarchy.clock",
+          "format": "ddd d MMM HH:mm",
+          "formatAlt": "d MMMM 'W'ww yyyy",
+          "verticalFormat": "HH\n—\nmm"
+        },
+        {
+          "id": "omarchy.keyboard-layout"
+        },
+        {
+          "id": "omarchy.weather"
+        },
+        {
+          "id": "omarchy.system-update"
+        }
+      ],
+      "left": [
+        {
+          "id": "omarchy.menu"
+        },
+        {
+          "id": "omarchy.workspaces"
+        }
+      ],
+      "right": [
+        {
+          "id": "omarchy.tray"
+        },
+        {
+          "id": "charlieras262.omablur"
+        },
+        {
+          "id": "omarchy.agents"
+        },
+        {
+          "id": "omarchy.bluetooth"
+        },
+        {
+          "id": "omarchy.network"
+        },
+        {
+          "id": "omarchy.audio"
+        },
+        {
+          "id": "omarchy.monitor"
+        },
+        {
+          "id": "ugreen-battery",
+          "type": "command",
+          "exec": "~/.config/omarchy/bar/scripts/ugreen-battery",
+          "interval": 30,
+          "tooltip": "UGREEN HiTune Max5c",
+          "fontSize": 13,
+          "horizontalMargin": 6
+        },
+        {
+          "id": "buds-battery",
+          "type": "command",
+          "exec": "~/.config/omarchy/bar/scripts/buds-battery",
+          "interval": 30,
+          "tooltip": "Galaxy Buds2",
+          "fontSize": 13,
+          "horizontalMargin": 6
+        },
+        {
+          "id": "mouse-battery",
+          "type": "command",
+          "exec": "~/.config/omarchy/bar/scripts/mouse-battery",
+          "interval": 60,
+          "tooltip": "Mouse battery",
+          "fontSize": 13,
+          "horizontalMargin": 6
+        },
+        {
+          "id": "power-draw",
+          "type": "qml",
+          "exec": "~/.config/omarchy/bar/scripts/power-draw",
+          "interval": 5,
+          "tooltip": "Power draw",
+          "fontSize": 13,
+          "horizontalMargin": 6
+        },
+        {
+          "id": "omarchy.power",
+          "showPercentage": true
+        }
+      ]
+    },
+    "position": "top",
+    "transparent": false
+  },
+  "idle": {
+    "lock": 300,
+    "screensaver": 150
+  },
+  "plugins": [
+    {
+      "id": "io.github.seyhunak.oma"
+    }
+  ],
+  "version": 1
+}

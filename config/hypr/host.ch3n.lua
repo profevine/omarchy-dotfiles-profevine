@@ -1,0 +1,2 @@
+-- Configurações só desta máquina (ch3n, desktop).
+-- Atalhos, apps e ajustes que não servem para o notebook ficam aqui.

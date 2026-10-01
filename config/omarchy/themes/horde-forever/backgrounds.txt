@@ -1,0 +1,18 @@
+# Papéis de parede do tema: <nome local> <arquivo na Warcraft Wiki>
+# Screenshots e artes oficiais de World of Warcraft: Forever (Blizzard).
+# Baixados por fetch-backgrounds.sh, para o repositório guardar só esta lista.
+01-orgrimmar.png             NewLighting_Orgrimmar_053.png
+02-horde-camp.jpg            Camping_Players_064.jpg
+03-darkspear-islands.jpg     BG_DarkspearIslands_091.jpg
+04-darkspear-zeppelin.jpg    BG_DarkspearIslands_093.jpg
+05-horde-heroes.png          Race_Class_NewCombos_055.png
+06-mulgore.jpg               Zones_Mulgore_022.jpg
+07-skywatch-tauren.jpg       Zones_Skywatch_023.jpg
+08-darkspear-sunset.jpg      BG_DarkspearIslands_090.jpg
+09-riverglades-sunset.jpg    Zones_Riverglades_037.jpg
+10-hyjal-dusk.jpg            Raid_Hyjal_085.jpg
+11-golden-sea.jpg            Zones_NewWater_006.jpg
+12-tirisfal.jpg              NewLighting_TirisfalGlades_050.jpg
+13-lordaeron-forsaken.png    Dungeon_Lordaeron_046.png
+14-kroldok-stronghold.jpg    Dungeon_KrolDokStronghold_071.jpg
+15-horde-key-art.jpg         Forever_Horde_key_art.jpg

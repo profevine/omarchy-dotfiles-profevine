@@ -1,100 +1,35 @@
 #!/bin/bash
-# Script para enviar as configurações ATUAIS desta máquina para o GitHub.
-# Use isto apenas na máquina onde você fez as modificações que deseja salvar.
+# Envia as configurações ATUAIS desta máquina para o GitHub.
+# Uso: ./upload.sh ["mensagem do commit"]
 
 set -e
-
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_SRC="$DOTFILES_DIR/config"
-CONFIG_DST="$HOME/.config"
-
-echo "--- Iniciando Upload de Configurações para o GitHub ---"
-
-# 1. Copiar as configurações ativas do sistema (~/.config) para o repositório
-echo "Copiando configurações ativas de ~/.config para o repositório..."
-
-# Lista de arquivos gerais para sincronizar
-files=(
-  hypr/bindings.conf
-  hypr/hyprland.conf
-  hypr/looknfeel.conf
-  hypr/workspaces.conf
-  waybar/style.css
-  waybar/battery_threshold.sh
-  waybar/power_usage.sh
-  waybar/custom_weather.sh
-  systemd/user/fix-downloads-perms.service
-  omarchy/extensions/menu.sh
-)
-
-for f in "${files[@]}"; do
-  src="$CONFIG_DST/$f"
-  dst="$CONFIG_SRC/$f"
-  if [ -f "$src" ]; then
-    mkdir -p "$(dirname "$dst")"
-    cp "$src" "$dst"
-    echo "Copiado: $f"
-  else
-    echo "Aviso: Arquivo ativo não encontrado ($src), ignorando..."
-  fi
-done
-
-# Copiar scripts e atalhos em ~/.local
-local_files=(
-  "bin/fix-downloads-perms.sh"
-  "share/nautilus/scripts/Destravar Permissões"
-)
-
-for lf in "${local_files[@]}"; do
-  src="$HOME/.local/$lf"
-  dst="$DOTFILES_DIR/local/$lf"
-  if [ -f "$src" ]; then
-    mkdir -p "$(dirname "$dst")"
-    cp "$src" "$dst"
-    chmod +x "$dst"
-    echo "Copiado (.local): $lf"
-  fi
-done
-
-# Copiar arquivos específicos de máquina com sufixo do hostname
-hostname_suffix=$(hostname)
-machine_files=(
-  hypr/monitors.conf
-  hypr/input.conf
-  waybar/config.jsonc
-)
-
-for mf in "${machine_files[@]}"; do
-  src="$CONFIG_DST/$mf"
-  dir_name=$(dirname "$mf")
-  base_name=$(basename "$mf")
-  extension="${base_name##*.}"
-  name_without_ext="${base_name%.*}"
-  dst="$CONFIG_SRC/$dir_name/${name_without_ext}.${hostname_suffix}.${extension}"
-  if [ -f "$src" ]; then
-    mkdir -p "$(dirname "$dst")"
-    cp "$src" "$dst"
-    echo "Copiado com sufixo da máquina: $mf -> ${dir_name}/${name_without_ext}.${hostname_suffix}.${extension}"
-  fi
-done
-
-# 2. Sincronizar com o GitHub
+source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 cd "$DOTFILES_DIR"
 
-# Verifica se houve alguma alteração real nos arquivos copiados
-if [[ -z $(git status -s) ]]; then
-    echo "Nenhuma mudança detectada entre suas configurações ativas e o repositório."
-    echo "O GitHub já está atualizado!"
-    exit 0
+echo "--- Upload das configurações de $HOST ---"
+
+# Mudanças soltas no repositório costumam ser o Nextcloud trazendo arquivos de
+# outra máquina; salvar por cima delas misturaria as duas.
+if [ -n "$(git status --porcelain)" ]; then
+  echo "O repositório tem mudanças que não são desta execução:"
+  git status --short
+  echo "Confira (ou descarte com 'git checkout -- .') e rode de novo."
+  exit 1
 fi
 
-echo "Mudanças detectadas. Preparando para enviar..."
+# Parte da versão mais recente, para não desfazer o que a outra máquina enviou
+git pull --ff-only origin main
 
-# Usa uma mensagem de commit personalizada se fornecida ($1), senão usa a padrão
-COMMIT_MSG=${1:-"update: configurações salvas de $(hostname) em $(date +'%Y-%m-%d %H:%M:%S')"}
+save_configs
 
+if [ -z "$(git status --porcelain)" ]; then
+  echo "Nenhuma mudança: o GitHub já está atualizado."
+  exit 0
+fi
+
+git status --short
 git add .
-git commit -m "$COMMIT_MSG"
+git commit -m "${1:-"update: configurações salvas de $HOST em $(date +'%Y-%m-%d %H:%M:%S')"}"
 git push origin main
 
-echo "--- Concluído! Suas configurações foram salvas no GitHub com sucesso. ---"
+echo "--- Concluído! Configurações de $HOST salvas no GitHub. ---"

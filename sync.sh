@@ -1,116 +1,34 @@
 #!/bin/bash
-# Script para atualizar o Omarchy e aplicar configurações do GitHub nesta máquina.
-# Este script é focado em DOWNLOAD: ele puxa do GitHub e aplica localmente.
+# Atualiza o Omarchy e aplica nesta máquina as configurações do GitHub.
+# Arquivos de máquina (monitores, teclado, barra, host.lua) vêm da versão desta
+# máquina no repositório; sem ela, o arquivo local é mantido.
+# Uso: ./sync.sh [--no-update]   (--no-update pula o omarchy-update)
 
 set -e
-
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_SRC="$DOTFILES_DIR/config"
-CONFIG_DST="$HOME/.config"
-
-echo "--- Iniciando Atualização (Modo Download) ---"
-
-# 1. Atualizar o sistema Omarchy
-if command -v omarchy-update &> /dev/null; then
-    echo "Atualizando Omarchy..."
-    omarchy-update
-else
-    echo "Comando omarchy-update não encontrado, pulando..."
-fi
-
-# 2. Puxar as configurações mais recentes do GitHub
+source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 cd "$DOTFILES_DIR"
+
+echo "--- Sincronizando $HOST com o GitHub ---"
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "O repositório tem mudanças que ainda não foram para o GitHub:"
+  git status --short
+  echo "Salve com ./upload.sh ou descarte com 'git checkout -- .' e rode de novo."
+  exit 1
+fi
+
+if [ "$1" != "--no-update" ] && command -v omarchy-update &> /dev/null; then
+  echo "Atualizando o Omarchy..."
+  omarchy-update
+fi
+
 echo "Buscando atualizações no GitHub..."
-
-# Descarta mudanças locais que possam impedir o pull (segurança para máquinas novas)
-git fetch origin main
-git reset --hard origin/main
-
-# 3. Aplicar as configurações do repositório no sistema (~/.config)
-echo "Sincronizando arquivos de configuração com ~/.config..."
-
-files=(
-  hypr/bindings.conf
-  hypr/hyprland.conf
-  hypr/looknfeel.conf
-  hypr/workspaces.conf
-  waybar/style.css
-  waybar/battery_threshold.sh
-  waybar/power_usage.sh
-  waybar/custom_weather.sh
-  systemd/user/fix-downloads-perms.service
-  omarchy/extensions/menu.sh
-)
-
-for f in "${files[@]}"; do
-  src="$CONFIG_SRC/$f"
-  dst="$CONFIG_DST/$f"
-  if [ -f "$src" ]; then
-    mkdir -p "$(dirname "$dst")"
-    cp "$src" "$dst"
-    echo "Aplicado: ~/.config/$f"
-  fi
-done
-
-# Aplicar arquivos específicos de máquina com sufixo do hostname ou manter locais
-hostname_suffix=$(hostname)
-machine_files=(
-  hypr/monitors.conf
-  hypr/input.conf
-  waybar/config.jsonc
-)
-
-for mf in "${machine_files[@]}"; do
-  dir_name=$(dirname "$mf")
-  base_name=$(basename "$mf")
-  extension="${base_name##*.}"
-  name_without_ext="${base_name%.*}"
-  src_machine="$CONFIG_SRC/$dir_name/${name_without_ext}.${hostname_suffix}.${extension}"
-  src_fallback="$CONFIG_SRC/$mf"
-  dst="$CONFIG_DST/$mf"
-  
-  if [ -f "$src_machine" ]; then
-    mkdir -p "$(dirname "$dst")"
-    cp "$src_machine" "$dst"
-    echo "Aplicado: ~/.config/$mf (específico de $hostname_suffix)"
-  elif [ -f "$src_fallback" ] && [ ! -f "$dst" ]; then
-    mkdir -p "$(dirname "$dst")"
-    cp "$src_fallback" "$dst"
-    echo "Aplicado: ~/.config/$mf (padrão do repositório)"
-  else
-    echo "Mantido: ~/.config/$mf local (específico desta máquina)"
-  fi
-done
-
-# Aplicar scripts e atalhos em ~/.local
-echo "Sincronizando scripts e atalhos com ~/.local..."
-local_files=(
-  "bin/fix-downloads-perms.sh"
-  "share/nautilus/scripts/Destravar Permissões"
-)
-
-for lf in "${local_files[@]}"; do
-  src="$DOTFILES_DIR/local/$lf"
-  dst="$HOME/.local/$lf"
-  if [ -f "$src" ]; then
-    mkdir -p "$(dirname "$dst")"
-    cp "$src" "$dst"
-    chmod +x "$dst"
-    echo "Aplicado: ~/.local/$lf"
-  fi
-done
-
-# 4. Ativar e recarregar serviço de permissões do usuário
-if command -v systemctl &> /dev/null; then
-    echo "Recarregando e ativando serviços do usuário..."
-    systemctl --user daemon-reload 2>/dev/null || true
-    systemctl --user enable --now fix-downloads-perms.service 2>/dev/null || true
+if ! git pull --ff-only origin main; then
+  echo "Este repositório tem commits que não estão no GitHub. Rode ./upload.sh antes."
+  exit 1
 fi
 
-# 5. Recarregar Hyprland para aplicar as mudanças
-if command -v hyprctl &> /dev/null; then
-    echo "Recarregando Hyprland..."
-    hyprctl reload
-fi
+apply_configs
+reload_desktop
 
-echo "--- Concluído! Configurações do GitHub aplicadas com sucesso. ---"
+echo "--- Concluído! Configurações aplicadas em $HOST. ---"
