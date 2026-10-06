@@ -1,4 +1,5 @@
 #!/bin/bash
+# Executado via bash (ver dotfiles-sync.service): o Nextcloud não preserva o bit de execução.
 # Roda o sync.sh ao entrar na sessão (dotfiles-sync.service), sem o
 # omarchy-update, que pede senha. Não aplica nada se esta máquina tiver
 # mudanças que ainda não foram para o GitHub: avisa para rodar o upload.sh.
@@ -46,7 +47,7 @@ $changes"
 fi
 
 before=$(git rev-parse HEAD)
-if ./sync.sh --no-update; then
+if bash ./sync.sh --no-update; then
   after=$(git rev-parse HEAD)
   if [ "$before" != "$after" ]; then
     notify normal "Atualizado: $(git log --oneline "$before..$after" | wc -l) commit(s) novo(s) aplicado(s)."
