@@ -24,6 +24,7 @@ GENERAL_FILES=(
   omarchy/extensions/omarchy-menu.jsonc
   omarchy/extensions/menu.sh
   systemd/user/fix-downloads-perms.service
+  systemd/user/app-Nextcloud@autostart.service.d/restart.conf
   # Legado (antes do Omarchy Quattro e do Omarchy shell)
   hypr/bindings.conf
   hypr/hyprland.conf
@@ -145,6 +146,38 @@ apply_configs() {
     systemctl --user daemon-reload 2>/dev/null || true
     systemctl --user enable --now fix-downloads-perms.service 2>/dev/null || true
   fi
+
+  apply_nextcloud
+}
+
+# Cliente do Nextcloud: arquivos que o servidor apagar vão para a lixeira desta
+# máquina em vez de sumir, e ele pergunta antes de apagar tudo de uma pasta. Em
+# 01/10/2026 uma exclusão de ~/Nextcloud/Projects numa máquina apagou a pasta no
+# servidor e na outra. O cliente regrava o .cfg ao fechar, por isso é parado
+# antes da edição.
+NEXTCLOUD_CFG="$CONFIG_DST/Nextcloud/nextcloud.cfg"
+NEXTCLOUD_SETTINGS=(moveToTrash=true promptDeleteAllFiles=true launchOnSystemStartup=true)
+
+apply_nextcloud() {
+  [ -f "$NEXTCLOUD_CFG" ] || return 0
+  local kv missing=()
+  for kv in "${NEXTCLOUD_SETTINGS[@]}"; do
+    grep -qx "$kv" "$NEXTCLOUD_CFG" || missing+=("$kv")
+  done
+  [ ${#missing[@]} -eq 0 ] && return 0
+
+  local unit=app-Nextcloud@autostart.service
+  systemctl --user stop "$unit" 2>/dev/null || true
+  pkill -x nextcloud 2>/dev/null && sleep 2
+  for kv in "${missing[@]}"; do
+    if grep -q "^${kv%%=*}=" "$NEXTCLOUD_CFG"; then
+      sed -i "s/^${kv%%=*}=.*/$kv/" "$NEXTCLOUD_CFG"
+    else
+      sed -i "/^\[General\]/a $kv" "$NEXTCLOUD_CFG"
+    fi
+    echo "Aplicado (Nextcloud): $kv"
+  done
+  systemctl --user start "$unit" 2>/dev/null || (setsid nextcloud --background &> /dev/null &)
 }
 
 # Faugus Launcher: só as preferências. A chave da SteamGridDB fica de fora por
