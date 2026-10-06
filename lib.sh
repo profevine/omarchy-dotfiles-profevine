@@ -304,6 +304,8 @@ reload_desktop() {
   if command -v omarchy &> /dev/null && pgrep -f "quickshell.*omarchy" > /dev/null; then
     omarchy restart shell > /dev/null 2>&1 && echo "Omarchy shell reiniciado."
   fi
+  # Sem sessão gráfica (ex.: via SSH) não há o que recarregar; não é falha
+  return 0
 }
 
 # Último commit aplicado nesta máquina. O boot-sync.sh compara ~/.config com
