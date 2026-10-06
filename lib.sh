@@ -25,6 +25,7 @@ GENERAL_FILES=(
   omarchy/extensions/menu.sh
   systemd/user/fix-downloads-perms.service
   systemd/user/app-Nextcloud@autostart.service.d/restart.conf
+  systemd/user/dotfiles-sync.service
   # Legado (antes do Omarchy Quattro e do Omarchy shell)
   hypr/bindings.conf
   hypr/hyprland.conf
@@ -145,6 +146,7 @@ apply_configs() {
   if command -v systemctl &> /dev/null; then
     systemctl --user daemon-reload 2>/dev/null || true
     systemctl --user enable --now fix-downloads-perms.service 2>/dev/null || true
+    systemctl --user enable dotfiles-sync.service 2>/dev/null || true
   fi
 
   apply_nextcloud
@@ -302,4 +304,30 @@ reload_desktop() {
   if command -v omarchy &> /dev/null && pgrep -f "quickshell.*omarchy" > /dev/null; then
     omarchy restart shell > /dev/null 2>&1 && echo "Omarchy shell reiniciado."
   fi
+}
+
+# Último commit aplicado nesta máquina. O boot-sync.sh compara ~/.config com
+# ele para saber se há mudanças locais que ainda não foram para o GitHub.
+APPLIED_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles-sync/applied"
+
+record_applied() {
+  mkdir -p "$(dirname "$APPLIED_FILE")"
+  git -C "$DOTFILES_DIR" rev-parse HEAD > "$APPLIED_FILE"
+}
+
+# Lista os arquivos do repositório que esta máquina mudou desde o commit dado:
+# roda o save_configs numa cópia descartável desse commit e vê o que mudou.
+# Arquivos que só existem aqui (sem versão no repositório) não contam, porque
+# o apply_configs nunca os sobrescreve.
+local_changes() {
+  local base="$1" tmp
+  tmp=$(mktemp -d)
+  git -C "$DOTFILES_DIR" archive "$base" | tar -x -C "$tmp"
+  (
+    cd "$tmp" || exit 1
+    git init -q && git add -A && git -c user.name=x -c user.email=x@x commit -qm base
+    bash -c 'source ./lib.sh; save_configs' > /dev/null 2>&1
+    git status --porcelain | grep -v '^??' | cut -c4-
+  )
+  rm -rf "$tmp"
 }

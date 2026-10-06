@@ -30,5 +30,6 @@ fi
 
 apply_configs
 reload_desktop
+record_applied
 
 echo "--- Concluído! Configurações aplicadas em $HOST. ---"

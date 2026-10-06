@@ -1,0 +1,12 @@
+[Unit]
+Description=Atualiza os dotfiles do GitHub ao entrar na sessão (boot-sync.sh)
+After=graphical-session.target app-Nextcloud@autostart.service
+PartOf=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/Nextcloud/Projects/omarchy-dotfiles-profevine/boot-sync.sh
+TimeoutStartSec=20min
+
+[Install]
+WantedBy=graphical-session.target

@@ -10,4 +10,5 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 echo "--- Restaurando configurações em $HOST ---"
 apply_configs
 reload_desktop
+record_applied
 echo "--- Concluído! Se algo não aplicou, saia e entre de novo na sessão. ---"
