@@ -320,16 +320,19 @@ record_applied() {
 # Lista os arquivos do repositório que esta máquina mudou desde o commit dado:
 # roda o save_configs numa cópia descartável desse commit e vê o que mudou.
 # Arquivos que só existem aqui (sem versão no repositório) não contam, porque
-# o apply_configs nunca os sobrescreve.
+# o apply_configs nunca os sobrescreve; diferença só de permissão também não
+# (o Nextcloud perde o bit de execução).
 local_changes() {
   local base="$1" tmp
   tmp=$(mktemp -d)
   git -C "$DOTFILES_DIR" archive "$base" | tar -x -C "$tmp"
   (
     cd "$tmp" || exit 1
-    git init -q && git add -A && git -c user.name=x -c user.email=x@x commit -qm base
+    git init -q && git config core.fileMode false
+    git add -A && git -c user.name=x -c user.email=x@x commit -qm base
     bash -c 'source ./lib.sh; save_configs' > /dev/null 2>&1
-    git status --porcelain | grep -v '^??' | cut -c4-
+    # A lista de plugins não entra: o apply_plugins só instala, nunca remove
+    git status --porcelain | grep -v '^??' | cut -c4- | grep -vx 'config/omarchy/plugins-third-party.txt'
   )
   rm -rf "$tmp"
 }
