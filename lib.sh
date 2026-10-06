@@ -297,7 +297,7 @@ reload_desktop() {
   if command -v hyprctl &> /dev/null; then
     hyprctl reload > /dev/null && echo "Hyprland recarregado."
     local errors
-    errors=$(hyprctl configerrors 2>/dev/null)
+    errors=$(hyprctl configerrors 2>/dev/null) || true
     [ -n "$errors" ] && [ "$errors" != "no errors" ] && echo "Aviso: erros na config do Hyprland:" && echo "$errors"
   fi
   # O shell só relê o código de plugins alterados quando é reiniciado
