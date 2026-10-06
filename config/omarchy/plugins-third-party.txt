@@ -3,5 +3,3 @@ https://github.com/crmne/omarchy-hyprmoncfg.git
 https://github.com/wicky14/omarchy-rounded-corner-blur.git
 https://github.com/fross100/omaplug.git
 https://github.com/SLcode777/omagotchi.git
-https://github.com/Charlieras262/omarchy-omablur.git
-https://github.com/seyhunak/omarchy-oma-theme.git

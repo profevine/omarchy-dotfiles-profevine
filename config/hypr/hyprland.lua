@@ -20,13 +20,66 @@ require("hypr.monitors")
 require("hypr.input")
 require("hypr.bindings")
 require("hypr.looknfeel")
+require("hypr.appearance")
 require("hypr.autostart")
 
--- Configurações só desta máquina (ver README: desktop x notebook).
-require("hypr.host")
+-- Settings for this machine only (bindings, apps, tweaks). Versioned in the
+-- dotfiles as host.<hostname>.lua, so the shared files stay the same everywhere.
+do local path = os.getenv("HOME") .. "/.config/hypr/host.lua"; local file = io.open(path, "r"); if file then file:close(); dofile(path) end end
 
 -- Toggle config flags dynamically.
 require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- Image viewer launched via imv-sized (~/.local/bin/imv-sized, double-click
+-- from the file manager) requests its own window geometry matching the
+-- image's aspect ratio, so give it a distinct app id and skip the default
+-- fixed 875x600 floating-window size that would otherwise override it.
+o.window("imv-sized", { float = true })
+o.window("imv-sized", { center = true })
+o.window("imv-sized", { tag = "-default-opacity" })
+o.window("imv-sized", { opacity = "1 1" })
+
+-- Hide Wine/Steam/xembedsniproxy systray helper windows
+o.window(
+  {
+    class = "^$",
+    title = "^$",
+    xwayland = true,
+    float = true,
+  },
+  {
+    opacity = "0.0 override",
+    no_focus = true,
+    no_blur = true,
+    no_shadow = true,
+    no_anim = true,
+    border_size = 0,
+    rounding = 0,
+    decorate = false,
+  }
+)
+
+o.window(
+  {
+    class = "steam_app_default",
+    title = "^$",
+    xwayland = true,
+    float = true,
+  },
+  {
+    opacity = "0.0 override",
+    no_focus = true,
+    no_blur = true,
+    no_shadow = true,
+    no_anim = true,
+    border_size = 0,
+    rounding = 0,
+    decorate = false,
+  }
+)
+
+-- Added by hyprmoncfg: its generated monitor rules load last, so nothing before this can override the applied layout.
+do local path = os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua"; local file = io.open(path, "r"); if file then file:close(); dofile(path) end end
