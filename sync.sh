@@ -10,6 +10,7 @@ cd "$DOTFILES_DIR"
 
 echo "--- Sincronizando $HOST com o GitHub ---"
 
+adopt_upstream_if_matching || true
 if [ -n "$(git status --porcelain)" ]; then
   echo "O repositório tem mudanças que ainda não foram para o GitHub:"
   git status --short

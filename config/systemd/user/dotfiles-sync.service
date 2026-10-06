@@ -5,7 +5,7 @@ PartOf=graphical-session.target
 
 [Service]
 Type=oneshot
-ExecStart=%h/Nextcloud/Projects/omarchy-dotfiles-profevine/boot-sync.sh
+ExecStart=%h/Projects/omarchy-dotfiles-profevine/boot-sync.sh
 TimeoutStartSec=20min
 
 [Install]

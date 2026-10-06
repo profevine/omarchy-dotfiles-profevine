@@ -23,7 +23,7 @@ wait_for() {
 }
 
 github_ok() { GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=10" git ls-remote -q origin main > /dev/null 2>&1; }
-repo_clean() { [ -z "$(git status --porcelain)" ]; }
+repo_clean() { adopt_upstream_if_matching > /dev/null 2>&1; [ -z "$(git status --porcelain)" ]; }
 
 if ! wait_for 9 github_ok; then
   notify normal "Sem acesso ao GitHub; dotfiles não atualizados neste boot."

@@ -331,3 +331,21 @@ local_changes() {
   )
   rm -rf "$tmp"
 }
+
+# O Nextcloud sincroniza os arquivos deste repositório mas ignora o .git. Quando
+# a outra máquina faz push, os arquivos novos chegam por aqui antes do commit, e
+# o git os vê como mudanças soltas. Se a pasta já está idêntica ao GitHub, só
+# avança o git para lá; os arquivos não são tocados.
+adopt_upstream_if_matching() {
+  [ -n "$(git -C "$DOTFILES_DIR" status --porcelain)" ] || return 0
+  git -C "$DOTFILES_DIR" fetch -q origin main || return 1
+  local old
+  old=$(git -C "$DOTFILES_DIR" rev-parse HEAD)
+  git -C "$DOTFILES_DIR" merge-base --is-ancestor "$old" origin/main || return 1
+  git -C "$DOTFILES_DIR" reset -q origin/main
+  if [ -n "$(git -C "$DOTFILES_DIR" status --porcelain)" ]; then
+    git -C "$DOTFILES_DIR" reset -q "$old"
+    return 1
+  fi
+  echo "Repositório alinhado ao GitHub (o Nextcloud já tinha trazido os arquivos)."
+}

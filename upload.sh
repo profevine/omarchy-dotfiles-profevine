@@ -10,6 +10,7 @@ echo "--- Upload das configurações de $HOST ---"
 
 # Mudanças soltas no repositório costumam ser o Nextcloud trazendo arquivos de
 # outra máquina; salvar por cima delas misturaria as duas.
+adopt_upstream_if_matching || true
 if [ -n "$(git status --porcelain)" ]; then
   echo "O repositório tem mudanças que não são desta execução:"
   git status --short
