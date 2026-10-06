@@ -53,7 +53,9 @@ MACHINE_FILES=(
 LOCAL_FILES=(
   "bin/fix-downloads-perms.sh"
   "bin/webcam-overlay"
+  "bin/imv-sized"
   "share/nautilus/scripts/Destravar Permissões"
+  "share/applications/imv.desktop"
 )
 
 # hypr/host.lua -> hypr/host.ch3n.lua
