@@ -1,0 +1,42 @@
+#!/bin/bash
+# Launches imv with a window sized to match the first image's aspect ratio,
+# capped to fit inside the focused monitor's usable area.
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+  exec imv
+fi
+
+first="$1"
+dims=$(identify -format "%w %h" -- "$first" 2>/dev/null | head -n1 || true)
+img_w=$(awk '{print $1}' <<<"$dims")
+img_h=$(awk '{print $2}' <<<"$dims")
+
+if [[ -z "${img_w:-}" || -z "${img_h:-}" ]] || ! command -v hyprctl >/dev/null; then
+  exec imv "$@"
+fi
+
+mon_json=$(hyprctl monitors -j 2>/dev/null | jq -r '[.[] | select(.focused==true)][0]')
+if [[ -z "$mon_json" || "$mon_json" == "null" ]]; then
+  exec imv "$@"
+fi
+
+mon_w=$(jq -r '.width' <<<"$mon_json")
+mon_h=$(jq -r '.height' <<<"$mon_json")
+scale=$(jq -r '.scale' <<<"$mon_json")
+
+read -r win_w win_h < <(awk -v iw="$img_w" -v ih="$img_h" -v mw="$mon_w" -v mh="$mon_h" -v s="$scale" '
+BEGIN {
+  max_w = (mw / s) * 0.85
+  max_h = (mh / s) * 0.85
+  r = iw / ih
+  w = iw
+  h = ih
+  if (w > max_w) { w = max_w; h = w / r }
+  if (h > max_h) { h = max_h; w = h * r }
+  if (w < 1) w = 1
+  if (h < 1) h = 1
+  printf "%d %d\n", w, h
+}')
+
+exec imv -i imv-sized -W "$win_w" -H "$win_h" "$@"
