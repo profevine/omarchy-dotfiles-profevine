@@ -1,0 +1,20 @@
+#!/bin/bash
+# O omarchy-windows-vm exige ~/Windows e ~/.windows com modo exatamente 700.
+# Se a pasta ganhar setgid (2700), o "chmod 0700" dele não tira o bit e a VM
+# falha com "Failed to write the Windows VM configuration".
+# Roda no login (windows-vm-perms.service) e antes de abrir a VM pelo menu.
+set -u
+
+for d in "$HOME/Windows" "$HOME/.windows"; do
+  [ -d "$d" ] && [ ! -L "$d" ] || continue
+  [ "$(stat -c %a "$d")" = 700 ] && continue
+  chmod u=rwx,go=,g-s "$d" && echo "Corrigido: $d -> $(stat -c %a "$d")"
+done
+
+# O "omarchy-windows-vm install" reescreve o atalho do menu; recoloca a correção
+desktop="$HOME/.local/share/applications/windows-vm.desktop"
+if [ -f "$desktop" ] && grep -q '^Exec=uwsm app -- omarchy-windows-vm launch$' "$desktop"; then
+  sed -i "s|^Exec=uwsm app -- omarchy-windows-vm launch\$|Exec=uwsm app -- sh -c \"bash $HOME/.local/bin/windows-vm-perms; exec omarchy-windows-vm launch\"|" "$desktop"
+  echo "Atalho do menu ajustado: $desktop"
+fi
+exit 0

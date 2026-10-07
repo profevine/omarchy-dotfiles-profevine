@@ -1,0 +1,9 @@
+[Unit]
+Description=Mantém ~/Windows e ~/.windows com modo 700 para a VM do Omarchy
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash %h/.local/bin/windows-vm-perms
+
+[Install]
+WantedBy=default.target

@@ -26,6 +26,7 @@ GENERAL_FILES=(
   systemd/user/fix-downloads-perms.service
   systemd/user/app-Nextcloud@autostart.service.d/restart.conf
   systemd/user/dotfiles-sync.service
+  systemd/user/windows-vm-perms.service
   # Legado (antes do Omarchy Quattro e do Omarchy shell)
   hypr/bindings.conf
   hypr/hyprland.conf
@@ -56,6 +57,7 @@ LOCAL_FILES=(
   "bin/fix-downloads-perms.sh"
   "bin/webcam-overlay"
   "bin/imv-sized"
+  "bin/windows-vm-perms"
   "share/nautilus/scripts/Destravar Permissões"
   "share/applications/imv.desktop"
 )
@@ -147,6 +149,7 @@ apply_configs() {
     systemctl --user daemon-reload 2>/dev/null || true
     systemctl --user enable --now fix-downloads-perms.service 2>/dev/null || true
     systemctl --user enable dotfiles-sync.service 2>/dev/null || true
+    systemctl --user enable --now windows-vm-perms.service 2>/dev/null || true
   fi
 
   apply_nextcloud
