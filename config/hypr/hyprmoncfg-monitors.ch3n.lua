@@ -3,16 +3,7 @@
 hl.monitor({
   output = "desc:Beihai Century Joint Innovation Technology Co.Ltd Tempest 34' 0000000000000",
   mode = "3440x1440@120.00",
-  position = "3136x-2144",
-  scale = 1,
-  sdr_min_luminance = 0.2,
-  sdr_max_luminance = 80,
-})
-
-hl.monitor({
-  output = "desc:LG Electronics L1742 0x01010101",
-  mode = "1280x1024@60.02",
-  position = "6061x-704",
+  position = "3046x-2144",
   scale = 1,
   sdr_min_luminance = 0.2,
   sdr_max_luminance = 80,
@@ -27,12 +18,21 @@ hl.monitor({
   sdr_max_luminance = 80,
 })
 
+hl.monitor({
+  output = "desc:VIE PRECISION 0000000000001",
+  mode = "1920x1080@165.00",
+  position = "6061x-500",
+  scale = 1,
+  sdr_min_luminance = 0.2,
+  sdr_max_luminance = 80,
+})
+
 hl.workspace_rule({ workspace = "1", monitor = "desc:LG Electronics LG ULTRAGEAR 304AZAL67024", default = true, persistent = true })
 hl.workspace_rule({ workspace = "2", monitor = "desc:Beihai Century Joint Innovation Technology Co.Ltd Tempest 34' 0000000000000", default = true, persistent = true })
-hl.workspace_rule({ workspace = "3", monitor = "desc:LG Electronics L1742 0x01010101", default = true, persistent = true })
+hl.workspace_rule({ workspace = "3", monitor = "desc:VIE PRECISION 0000000000001", default = true, persistent = true })
 hl.workspace_rule({ workspace = "4", monitor = "desc:LG Electronics LG ULTRAGEAR 304AZAL67024" })
 hl.workspace_rule({ workspace = "5", monitor = "desc:Beihai Century Joint Innovation Technology Co.Ltd Tempest 34' 0000000000000" })
-hl.workspace_rule({ workspace = "6", monitor = "desc:LG Electronics L1742 0x01010101" })
+hl.workspace_rule({ workspace = "6", monitor = "desc:VIE PRECISION 0000000000001" })
 hl.workspace_rule({ workspace = "7", monitor = "desc:LG Electronics LG ULTRAGEAR 304AZAL67024" })
 hl.workspace_rule({ workspace = "8", monitor = "desc:Beihai Century Joint Innovation Technology Co.Ltd Tempest 34' 0000000000000" })
-hl.workspace_rule({ workspace = "9", monitor = "desc:LG Electronics L1742 0x01010101" })
+hl.workspace_rule({ workspace = "9", monitor = "desc:VIE PRECISION 0000000000001" })

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "vin3.headset-battery",
+  "name": "Headset battery",
+  "version": "1.0.0",
+  "author": "vin3",
+  "description": "Battery of the Sony Pulse (PlayStation Link) and Bluetooth headsets",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "HeadsetBattery.qml"
+  },
+  "barWidget": {
+    "displayName": "Headset battery",
+    "description": "Battery of the Sony Pulse (PlayStation Link) and Bluetooth headsets",
+    "category": "System",
+    "allowMultiple": false
+  }
+}
